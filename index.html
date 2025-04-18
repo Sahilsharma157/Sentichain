@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SentimentChain - Blockchain-Powered Sentiment Analysis</title>
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.css">
+
+  <!-- ✅ Custom CSS (local) -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
+
+  <!-- ✅ Custom JS (local) -->
+  <script src="script.js" defer></script>
+  <script src="charts.js" defer></script>
+  <script src="blockchain.js" defer></script>
+</head>
+<body>
+
+
+
+
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <div class="logo">SC</div>
+                <h1>SentimentChain</h1>
+            </div>
+            <div class="header-actions">
+                <button id="connectWallet" class="wallet-btn">Connect Wallet</button>
+                <button id="themeToggle">🌙</button>
+            </div>
+        </header>
+
+        <div class="l1x-banner">
+            <div class="l1x-info">
+                <div class="l1x-logo">L1X</div>
+                <div class="l1x-text">
+                    <h3>Powered by L1X Blockchain</h3>
+                    <p>Store, verify and trade sentiment analysis data on L1X blockchain</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="analyze">Analyze</button>
+            <button class="tab-btn" data-tab="history">History</button>
+            <button class="tab-btn" data-tab="marketplace">Marketplace</button>
+            <button class="tab-btn" data-tab="about">About L1X</button>
+        </div>
+
+        <div class="tab-content" id="analyze-tab">
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="fileInput">Upload CSV</label>
+                    <input type="file" id="fileInput" accept=".csv">
+                </div>
+                
+                <div class="input-group">
+                    <label for="keywordInput">Filter Keyword</label>
+                    <input type="text" id="keywordInput" placeholder="e.g., crypto, L1X, blockchain">
+                </div>
+
+                <div class="input-group">
+                    <label for="urlInput">Web URL</label>
+                    <input type="url" id="urlInput" placeholder="https://example.com/article">
+                </div>
+            </div>
+
+            <div class="text-input-container">
+                <label for="textInput">Direct Text Input</label>
+                <textarea id="textInput" placeholder="Type or paste your text here for sentiment analysis..."></textarea>
+            </div>
+
+            <div class="analysis-options">
+                <div class="model-selection">
+                    <label>Model:</label>
+                    <select id="modelSelect">
+                        <option value="basic">Basic (Free)</option>
+                        <option value="advanced">RoBERTa (Premium)</option>
+                        <option value="blockchain">L1X Blockchain Consensus</option>
+                    </select>
+                </div>
+                <button id="analyzeBtn" class="glow-button">Analyze</button>
+            </div>
+
+            <div class="results-container hidden" id="resultsContainer">
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <h4>Overall Sentiment</h4>
+                        <div class="sentiment-indicator" id="overallSentiment">Neutral</div>
+                    </div>
+                    <div class="summary-card">
+                        <h4>Confidence Score</h4>
+                        <div class="confidence-score" id="confidenceScore">0%</div>
+                    </div>
+                    <div class="summary-card">
+                        <h4>Analysis Time</h4>
+                        <div class="analysis-time" id="analysisTime">0ms</div>
+                    </div>
+                </div>
+
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <h3>Sentiment Distribution</h3>
+                        <canvas id="barChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Sentiment Proportions</h3>
+                        <canvas id="pieChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Sentiment Intensity</h3>
+                        <canvas id="lineChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Key Topics</h3>
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="blockchain-verification">
+                <h3>L1X Blockchain Verification</h3>
+                <p>Store your analysis results immutably on the L1X blockchain for future reference, verification, and potential monetization.</p>
+                <div class="blockchain-benefits">
+                    <div class="benefit">
+                        <i data-feather="lock"></i>
+                        <span>Immutable Records</span>
+                    </div>
+                    <div class="benefit">
+                        <i data-feather="check-circle"></i>
+                        <span>Verifiable Results</span>
+                    </div>
+                    <div class="benefit">
+                        <i data-feather="dollar-sign"></i>
+                        <span>Monetize Data</span>
+                    </div>
+                </div>
+                <button id="storeOnChain" class="blockchain-btn" disabled>Store on L1X Blockchain</button>
+                <div class="transaction-info" id="transactionInfo"></div>
+            </div>
+        </div>
+
+        <div class="tab-content hidden" id="history-tab">
+            <h2>Analysis History</h2>
+            <div class="history-filters">
+                <input type="text" id="historySearch" placeholder="Search history...">
+                <select id="historyFilter">
+                    <option value="all">All Analyses</option>
+                    <option value="positive">Positive</option>
+                    <option value="negative">Negative</option>
+                    <option value="neutral">Neutral</option>
+                    <option value="blockchain">On Blockchain</option>
+                </select>
+            </div>
+            <div class="history-list" id="historyList">
+                <div class="empty-state">
+                    <i data-feather="inbox"></i>
+                    <p>No analysis history yet. Start by analyzing some text!</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content hidden" id="marketplace-tab">
+            <h2>L1X Sentiment Data Marketplace</h2>
+            <p class="marketplace-intro">Buy or sell anonymized sentiment analysis datasets using L1X tokens. All transactions are secured by blockchain technology.</p>
+            
+            <div class="marketplace-categories">
+                <button class="category-btn active" data-category="all">All</button>
+                <button class="category-btn" data-category="finance">Finance</button>
+                <button class="category-btn" data-category="crypto">Crypto</button>
+                <button class="category-btn" data-category="product">Product Reviews</button>
+                <button class="category-btn" data-category="social">Social Media</button>
+                <button class="category-btn" data-category="news">News</button>
+            </div>
+            
+            <div class="marketplace-items" id="marketplaceItems">
+                <!-- Marketplace items will be added dynamically via JavaScript -->
+            </div>
+
+            <div class="marketplace-actions">
+                <button id="listDataBtn" class="market-action-btn" disabled>List Your Data</button>
+                <div class="market-info">
+                    <i data-feather="info"></i>
+                    <p>Connect your wallet to buy or sell sentiment datasets</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content hidden" id="about-tab">
+            <div class="about-l1x">
+                <h2>What is L1X?</h2>
+                <p>L1X is a next-generation Layer 1 blockchain that combines the strengths of AI and crypto technologies to create a secure, scalable, and efficient platform for Web3 applications.</p>
+                
+                <div class="l1x-features">
+                    <div class="feature-card">
+                        <i data-feather="shield"></i>
+                        <h3>AI-Driven Security</h3>
+                        <p>Utilizes AI for smart contract auditing, fraud detection, and optimized gas fee prediction.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i data-feather="trending-up"></i>
+                        <h3>DeFi & Trading</h3>
+                        <p>AI-powered trading strategies, market prediction, and portfolio optimization.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i data-feather="users"></i>
+                        <h3>Enhanced Governance</h3>
+                        <p>Intelligent DAO voting mechanisms and governance proposals.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i data-feather="eye"></i>
+                        <h3>Privacy & Identity</h3>
+                        <p>Secure decentralized identity solutions with AI-powered verification.</p>
+                    </div>
+                </div>
+
+                <div class="additional-features">
+                    <h3>Key Benefits</h3>
+                    <div class="benefits-items">
+                        <div class="benefit-item">
+                            <i data-feather="target"></i>
+                            <h4>Real-time Analysis</h4>
+                            <p>Analyze sentiment from any source in real-time with cutting-edge AI models.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <i data-feather="code"></i>
+                            <h4>Advanced Visualization</h4>
+                            <p>See sentiment trends and patterns through interactive, customizable charts.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <i data-feather="globe"></i>
+                            <h4>Blockchain Security</h4>
+                            <p>Store and verify your analysis results with blockchain technology.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <i data-feather="layout"></i>
+                            <h4>Data Marketplace</h4>
+                            <p>Buy and sell valuable sentiment datasets with secure transactions.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>SentimentChain</h4>
+                    <p>L1X blockchain-powered sentiment analysis for the modern web.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">API</a></li>
+                        <li><a href="#">Pricing</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Connect</h4>
+                    <div class="social-links">
+                        <a href="#" class="social-link">Twitter</a>
+                        <a href="#" class="social-link">GitHub</a>
+                        <a href="#" class="social-link">Discord</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 SentimentChain on L1X. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+</body>
+</html>
